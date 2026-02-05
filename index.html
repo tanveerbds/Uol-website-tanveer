@@ -1,0 +1,172 @@
+<!doctype html>
+<html>
+<head>
+<title>UOL GPA & CGPA Calculator</title>
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#f7f7f7;
+    padding:20px;
+}
+
+h2{
+    color:#1a73e8;
+}
+
+.container{
+    max-width: 500px;
+    margin:auto;
+}
+
+.card{
+    background:white;
+    padding:15px;
+    margin-bottom:15px;
+    border-radius:10px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+
+input, select{
+    width:100%;
+    padding:10px;
+    margin:6px 0;
+    border-radius:5px;
+    border:1px solid #ccc;
+    box-sizing:border-box;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    background:#1a73e8;
+    color:white;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+button:hover{
+    background:#155ab6;
+}
+
+.result{
+    background:#e8f0fe;
+    padding:10px;
+    border-radius:5px;
+    text-align:center;
+    font-weight:bold;
+    font-size:18px;
+    margin-top:10px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h2>Semester GPA Calculator</h2>
+<div id="subjects"></div>
+<button onclick="addSubject()">+ Add Subject</button>
+<button onclick="calcSGPA()">Calculate SGPA</button>
+<div id="sgpaResult" class="result"></div>
+
+<hr>
+
+<h2>CGPA Calculator (Manual Entry)</h2>
+<div id="cgpaInputs"></div>
+<button onclick="addCGPASemester()">+ Add Semester</button>
+<button onclick="calcCGPA()">Calculate CGPA</button>
+<div id="cgpaResult" class="result"></div>
+
+</div>
+
+<script>
+// ---------------- SGPA ----------------
+function addSubject(){
+    var box=document.createElement("div");
+    box.className="card";
+    box.innerHTML=`
+    <select class="grade">
+        <option>A</option>
+        <option>A-</option>
+        <option>B+</option>
+        <option>B</option>
+        <option>C+</option>
+        <option>C</option>
+        <option>D+</option>
+        <option>D</option>
+        <option>F</option>
+    </select>
+    <input type="number" class="credit" placeholder="Credit Hours">
+    `;
+    document.getElementById("subjects").appendChild(box);
+}
+
+// Start with 3 subjects
+addSubject(); addSubject(); addSubject();
+
+function gradeValue(g){
+    if(g=="A") return 4;
+    if(g=="A-") return 3.75;
+    if(g=="B+") return 3.5;
+    if(g=="B") return 3;
+    if(g=="C+") return 2.5;
+    if(g=="C") return 2;
+    if(g=="D+") return 1.5;
+    if(g=="D") return 1;
+    if(g=="F") return 0;
+}
+
+function calcSGPA(){
+    var grades=document.getElementsByClassName("grade");
+    var credits=document.getElementsByClassName("credit");
+    var totalPoints=0;
+    var totalCredits=0;
+    for(var i=0;i<grades.length;i++){
+        var g=gradeValue(grades[i].value);
+        var c=Number(credits[i].value);
+        if(isNaN(c) || c<=0){alert("Enter valid credit hours"); return;}
+        totalPoints += g*c;
+        totalCredits += c;
+    }
+    var sgpa=totalPoints/totalCredits;
+    document.getElementById("sgpaResult").innerHTML="SGPA: "+sgpa.toFixed(2);
+    document.getElementById("subjects").innerHTML="";
+    addSubject(); addSubject(); addSubject();
+}
+
+// ---------------- CGPA ----------------
+function addCGPASemester(){
+    var box=document.createElement("div");
+    box.className="card";
+    box.innerHTML=`
+    <input type="number" step="0.01" class="sgpaInput" placeholder="Semester GPA">
+    <input type="number" class="screditInput" placeholder="Semester Credits">
+    `;
+    document.getElementById("cgpaInputs").appendChild(box);
+}
+
+// Start with 1 semester
+addCGPASemester();
+
+function calcCGPA(){
+    var sgpas=document.getElementsByClassName("sgpaInput");
+    var credits=document.getElementsByClassName("screditInput");
+    var totalPoints=0;
+    var totalCredits=0;
+    for(var i=0;i<sgpas.length;i++){
+        var g=parseFloat(sgpas[i].value);
+        var c=parseFloat(credits[i].value);
+        if(isNaN(g)||isNaN(c)){alert("Fill all CGPA fields"); return;}
+        totalPoints += g*c;
+        totalCredits += c;
+    }
+    var cgpa=totalPoints/totalCredits;
+    document.getElementById("cgpaResult").innerHTML="CGPA: "+cgpa.toFixed(2);
+}
+</script>
+
+</body>
+</html>
